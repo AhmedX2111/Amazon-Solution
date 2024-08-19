@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Order Success";
+}
+
+<div class="container">
+    <div class="alert alert-success mt-3" role="alert" id="successAlert">
+        @ViewBag.Message
+    </div>
+</div>
+
+<!-- Include JavaScript for auto-redirection -->
+<script>
+    // Show the success message
+    document.getElementById('successAlert').style.display = 'block';
+
+    // Set a timeout to redirect after 2 seconds
+    setTimeout(function() {
+        window.location.href = '@Url.Action("Index", "Electronics")';
+    }, 2000); // 2000 milliseconds = 2 seconds
+</script>

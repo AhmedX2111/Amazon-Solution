@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Amazon.ViewModels.LaptopViewModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Electronics Index</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-4">
+
+        <!-- Card view for each laptop -->
+        <div class="row">
+            @foreach (var laptop in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        @* To read image path from database *@
+                        <img src="@Url.Content(laptop.Images)" class="card-img-top" alt="Laptop Image" />
+
+                        <div class="card-body">
+                            <h5 class="card-title">@laptop.Name</h5>
+                            <p class="card-text"><strong>Price: @laptop.Price.ToString("C")</strong></p>
+
+                            <!-- Button to view details -->
+                            <form asp-controller="Electronics" asp-action="Details" method="get" class="d-inline">
+                                <input type="hidden" name="id" value="@laptop.Id" />
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    View Details
+                                </button>
+                            </form>
+
+                            <!-- Button to buy now -->
+                            <form asp-controller="Electronics" asp-action="Buy" method="get" class="d-inline ms-2">
+                                <input type="hidden" name="id" value="@laptop.Id" />
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    Buy Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

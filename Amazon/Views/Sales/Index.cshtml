@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Amazon.ViewModels.LaptopViewModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Electronics Index</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Laptops and Purchase Counts</h2>
+
+        <!-- Table to display number of each item purchased -->
+        <table class="table table-bordered mb-4">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Purchase Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var laptop in Model)
+                {
+                    <tr>
+                        <td>@laptop.Name</td>
+                        <td>@laptop.Description</td>
+                        <td>@laptop.Price.ToString("C")</td>
+                        <td>@laptop.PurchaseCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+                            
+</body>
+</html>
