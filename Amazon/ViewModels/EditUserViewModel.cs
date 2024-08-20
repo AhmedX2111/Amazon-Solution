@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Amazon.ViewModels
 {
-    public class EditUserViewModel : IdentityRole
+    public class EditUserViewModel : IdentityUser
     {
         public string UserId { get; set; }
         public string UserName { get; set; }

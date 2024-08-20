@@ -16,7 +16,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // Configure Identity with ApplicationUser
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
 })
@@ -29,8 +29,8 @@ builder.Services.AddControllersWithViews();
 
 // Register your custom services
 builder.Services.AddScoped<LaptopService>();
-builder.Services.AddScoped<UserManager<ApplicationUser>>();
-builder.Services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
+builder.Services.AddScoped<UserManager<IdentityUser>>();
+//builder.Services.AddScoped<SignInManager<IdentityUser>, CustomSignInManager>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(typeof(MappingProfile)); // Register AutoMapper with your mapping profile

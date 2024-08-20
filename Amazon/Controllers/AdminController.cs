@@ -57,7 +57,7 @@ namespace Amazon.Controllers
                 UserName = user.UserName,
                 Email = user.Email,
                 SelectedRole = currentRole, // Current role
-                
+
                 Roles = roles // Ensure roles list is populated correctly
 
             };
@@ -70,7 +70,7 @@ namespace Amazon.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateUser(EditUserViewModel model)
         {
-            var user = await _userManager.FindByIdAsync(model.UserId) as ApplicationUser;
+            var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)
             {
                 return NotFound();
@@ -100,19 +100,19 @@ namespace Amazon.Controllers
             }
 
             // Update user's enabled status
-            user.IsEnabled = model.IsEnabled;
+            //user.IsEnabled = model.IsEnabled;
 
-            // Disable user login if IsEnabled is false
-            if (!user.IsEnabled)
-            {
-                user.LockoutEnabled = true;
-                user.LockoutEnd = DateTimeOffset.MaxValue;
-            }
-            else
-            {
-                user.LockoutEnabled = false;
-                user.LockoutEnd = null;
-            }
+            //// Disable user login if IsEnabled is false
+            //if (!user.IsEnabled)
+            //{
+            //    user.LockoutEnabled = true;
+            //    user.LockoutEnd = DateTimeOffset.MaxValue;
+            //}
+            //else
+            //{
+            //    user.LockoutEnabled = false;
+            //    user.LockoutEnd = null;
+            //}
 
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
