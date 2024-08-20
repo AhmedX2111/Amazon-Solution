@@ -1,4 +1,5 @@
 ﻿using Amazon.Models;
+using Amazon.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using System.Reflection.Emit;
 namespace Amazon.Data
 {
 	// Inherit 7 dbsets from Identity                          // Generic overload
-	public class ApplicationDbContext : IdentityDbContext    /*<IdentityUser, IdentityRole, string>*/
+	public class ApplicationDbContext : IdentityDbContext<ApplicationUser>    /*<IdentityUser, IdentityRole, string>*/
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 			: base(options)

@@ -1,0 +1,114 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model Amazon.ViewModels.AdminViewModel
+
+@{
+    ViewData["Title"] = "Admin Page";
+}
+
+@inject UserManager<IdentityUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+
+<h1>Admin Page</h1>
+
+<div class="input-group mb-3">
+    <input type="text" id="searchEmail" class="form-control form-control-sm" placeholder="Search" onkeyup="filterAndHighlight()" aria-label="Search" aria-describedby="searchButton" style="max-width: 300px;" />
+    <button class="btn btn-outline-secondary btn-sm" type="button" id="searchButton" onclick="filterAndHighlight()">
+        <i class="fa fa-search"></i>
+    </button>
+</div>
+
+<table class="table" id="userTable">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Current Role(s)</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    @foreach (var role in Model.Roles.Where(r => UserManager.GetRolesAsync(user).Result.Contains(r.Name)))
+                    {
+                        @role.Name
+                        <br />
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("EditUser", "Admin", new { userId = user.Id })" class="btn btn-sm btn-primary">
+                        <i class="fa fa-edit"></i> Edit
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    <script>
+        document.getElementById("searchEmail").addEventListener("input", function () {
+            filterAndHighlight();
+        });
+
+        function filterAndHighlight() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("searchEmail");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("userTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Remove existing highlights
+            removeHighlights();
+
+            for (i = 1; i < tr.length; i++) {
+                tr[i].style.display = "none"; // Hide the row initially
+                td = tr[i].getElementsByTagName("td");
+
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = ""; // Show the row if a match is found
+                            highlightText(td[j], filter); // Highlight matched text
+                            break; // Stop checking other columns in this row
+                        }
+                    }
+                }
+            }
+        }
+
+        function highlightText(element, text) {
+            var innerHTML = element.innerHTML;
+            var regex = new RegExp(text, 'gi'); // Case-insensitive search
+            innerHTML = innerHTML.replace(regex, function (matched) {
+                return "<span class='highlight'>" + matched + "</span>";
+            });
+            element.innerHTML = innerHTML;
+        }
+
+        function removeHighlights() {
+            var highlighted = document.querySelectorAll('.highlight');
+            highlighted.forEach(function (span) {
+                var parent = span.parentNode;
+                parent.replaceChild(document.createTextNode(span.textContent), span);
+                parent.normalize(); // Combine adjacent text nodes
+            });
+        }
+    </script>
+}
+
+
+
+<style>
+    .highlight {
+        background-color: yellow;
+        font-weight: bold;
+    }
+</style>

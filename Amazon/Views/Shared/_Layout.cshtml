@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -6,6 +10,8 @@
     <title>@ViewData["Title"] - Amazon</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Amazon.styles.css" asp-append-version="true" />
     <style>
@@ -63,10 +69,20 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-controller="Electronics" asp-action="Index">Electronics</a>
                         </li>
-                        <!-- Add Sales button here -->
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="Sales" asp-action="Index">Sales</a>
-                        </li>
+                        <!-- Conditionally show Sales button -->
+                        @if (SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Sales" asp-action="Index">Sales</a>
+                            </li>
+                        }
+                        <!-- Conditionally show Admin button -->
+                        @if (SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Admin" asp-action="Index">Admin</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

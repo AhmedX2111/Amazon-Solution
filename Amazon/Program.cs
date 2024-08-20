@@ -1,63 +1,81 @@
+using Amazon.Authorization;
 using Amazon.Data;
 using Amazon.Mapping;
-using Amazon.Models;
 using Amazon.Services;
+using Amazon.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System.Reflection;
 
-    var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString));
+// Configure services
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-    builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
-    
+// Configure Identity with ApplicationUser
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddRoles<IdentityRole>() // Add role management
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-    builder.Services.AddControllersWithViews();
-    builder.Services.AddScoped<LaptopService>();
 
-    // Configure Newtonsoft.Json settings
-    builder.Services.AddControllersWithViews()
-        .AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.Formatting = Formatting.Indented;
-            // You can add more settings here if needed
-        });
+builder.Services.AddControllersWithViews();
 
-    builder.Services.AddRazorPages();
-    builder.Services.AddAutoMapper(typeof(MappingProfile));
+// Register your custom services
+builder.Services.AddScoped<LaptopService>();
+builder.Services.AddScoped<UserManager<ApplicationUser>>();
+builder.Services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
 
-    var app = builder.Build();
+builder.Services.AddRazorPages();
+builder.Services.AddAutoMapper(typeof(MappingProfile)); // Register AutoMapper with your mapping profile
 
-    if (app.Environment.IsDevelopment())
+var app = builder.Build();
+
+// Role seeding during application startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
     {
-        app.UseMigrationsEndPoint();
+        // Call the method to seed roles
+        await RoleSeeder.SeedRolesAsync(services);
     }
-    else
+    catch (Exception ex)
     {
-        app.UseExceptionHandler("/Home/Error");
-        app.UseHsts();
+        // Log any errors that occur during role seeding
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding roles.");
     }
+}
 
-    app.UseHttpsRedirection();
-    app.UseStaticFiles();
+// Configure the HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint(); // Ensure migrations are enabled in development
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
-    app.UseRouting();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+app.UseRouting();
 
-    app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-    app.MapRazorPages();
+app.UseAuthentication(); // Use Authentication middleware
+app.UseAuthorization(); // Use Authorization middleware
 
-    app.Run();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
+app.Run();

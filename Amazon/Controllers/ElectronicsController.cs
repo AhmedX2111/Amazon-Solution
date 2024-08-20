@@ -13,6 +13,7 @@ using System.Net;
 
 namespace Amazon.Controllers
 {
+    /*[Authorize(Roles = "Admin")]*/
     public class ElectronicsController : Controller
     {
         private readonly ApplicationDbContext _context;

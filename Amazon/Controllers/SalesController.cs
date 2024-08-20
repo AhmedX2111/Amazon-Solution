@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Amazon.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class SalesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -14,7 +15,7 @@ namespace Amazon.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles ="Admin")]
+        
         public async Task<IActionResult> Index()
         {
             var laptops = await _context.Laptops
