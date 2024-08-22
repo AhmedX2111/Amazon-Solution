@@ -1,0 +1,37 @@
+﻿@model Amazon.ViewModels.LaptopDetailsViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Customer Details for @Model.Laptop.Name</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Customer Details for @Model.Laptop.Name</h2>
+
+        <!-- Table to display customer details -->
+        <table class="table table-bordered mb-4">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Customer Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.Customers)
+                {
+                    <tr>
+                        <td>@customer.Name</td>
+                        <td>@customer.Address</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Back to laptops list -->
+        <a asp-action="Index" class="btn btn-primary">Back to Laptops List</a>
+    </div>
+</body>
+</html>

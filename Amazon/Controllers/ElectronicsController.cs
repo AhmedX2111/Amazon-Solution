@@ -117,6 +117,7 @@ namespace Amazon.Controllers
                 Name = name,
                 Address = customerAddress,
                 ProductName = laptop.Name,
+                LaptopId = laptop.Id
                 
             };
 
