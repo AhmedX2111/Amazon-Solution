@@ -14,10 +14,10 @@ namespace Amazon.ViewModels
         public decimal Price { get; set; }  // Specify precision and scale here
 		public string Images { get; set; }
 		public string? Address { get; set; }
-
-        // New properties for customer details
-        public string CustomerName { get; set; }
-        public string CustomerAddress { get; set; }
+        public List<CustomerViewModels> Customers { get; set; } = new List<CustomerViewModels>(); // Add this property
         public int PurchaseCount { get; set; }
+        
+
+
     }
 }

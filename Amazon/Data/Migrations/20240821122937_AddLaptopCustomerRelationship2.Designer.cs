@@ -4,6 +4,7 @@ using Amazon.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amazon.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240821122937_AddLaptopCustomerRelationship2")]
+    partial class AddLaptopCustomerRelationship2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,9 +60,6 @@ namespace Amazon.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -81,9 +81,31 @@ namespace Amazon.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.ToTable("Laptops");
+                });
+
+            modelBuilder.Entity("Amazon.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomerAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LaptopId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LaptopId");
+
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("Amazon.Models.Purchase", b =>
@@ -94,6 +116,9 @@ namespace Amazon.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LaptopId")
                         .HasColumnType("int");
 
@@ -101,6 +126,8 @@ namespace Amazon.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("LaptopId");
 
@@ -320,20 +347,32 @@ namespace Amazon.Data.Migrations
                     b.Navigation("Laptop");
                 });
 
-            modelBuilder.Entity("Amazon.Models.Laptop", b =>
+            modelBuilder.Entity("Amazon.Models.Order", b =>
                 {
-                    b.HasOne("Amazon.Models.Customer", null)
-                        .WithMany("PurchasedLaptops")
-                        .HasForeignKey("CustomerId");
+                    b.HasOne("Amazon.Models.Laptop", "Laptop")
+                        .WithMany("Orders")
+                        .HasForeignKey("LaptopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Laptop");
                 });
 
             modelBuilder.Entity("Amazon.Models.Purchase", b =>
                 {
+                    b.HasOne("Amazon.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Amazon.Models.Laptop", "Laptop")
                         .WithMany("Purchases")
                         .HasForeignKey("LaptopId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Laptop");
                 });
@@ -389,14 +428,11 @@ namespace Amazon.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Amazon.Models.Customer", b =>
-                {
-                    b.Navigation("PurchasedLaptops");
-                });
-
             modelBuilder.Entity("Amazon.Models.Laptop", b =>
                 {
                     b.Navigation("Customers");
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Purchases");
                 });

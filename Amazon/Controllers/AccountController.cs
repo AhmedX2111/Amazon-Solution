@@ -1,4 +1,5 @@
-﻿using Amazon.ViewModels;
+﻿using Amazon.Users;
+using Amazon.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
@@ -23,6 +24,7 @@ namespace Amazon.Controllers
             return View();
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -33,7 +35,8 @@ namespace Amazon.Controllers
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, model.Role); // Add role after successful user creation
+                    // Set success message in TempData
+                    TempData["SuccessMessage"] = "Registration successful! You can now log in.";
 
                     // Redirect to the Login page after successful registration
                     return RedirectToAction("Login", "Account");
@@ -45,6 +48,7 @@ namespace Amazon.Controllers
             }
             return View(model);
         }
+
 
         // Login Action
         [HttpGet]
@@ -65,11 +69,21 @@ namespace Amazon.Controllers
                     // Redirect to the return URL if it's provided, otherwise redirect to the home page
                     return Redirect(returnUrl ?? Url.Action("Index", "Home"));
                 }
-                ModelState.AddModelError("", "Invalid login attempt.");
+                else if (result.IsNotAllowed)
+                {
+                    // Account is disabled
+                    ModelState.AddModelError("", "Your account has been disabled. Please contact support.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                }
             }
+
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+
 
 
         // Logout Action

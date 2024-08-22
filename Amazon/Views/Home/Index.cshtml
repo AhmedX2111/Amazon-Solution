@@ -2,7 +2,55 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="container">
+    <section class="hero-section text-center text-light d-flex align-items-center justify-content-center" style="background: url('~/images/laptops-phones-background.jpg') no-repeat center center; background-size: cover; height: 100vh;">
+        <div class="hero-content">
+            <h1 class="display-4 fw-bold">Welcome to Amazon</h1>
+            <p class="lead mb-4">Discover our wide range of products and services tailored just for you.</p>
+            <a class="btn btn-primary btn-lg" asp-controller="Electronics" asp-action="Index">Start Shopping</a>
+        </div>
+    </section>
 </div>
+
+<style>
+    .navbar-brand img {
+        height: 40px;
+        width: auto;
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+        color: #FFFFFF; /* White text color */
+    }
+
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #FF9900; /* Amazon orange on hover */
+        }
+
+    .btn-warning {
+        background-color: #FF9900;
+        border-color: #FF9900;
+    }
+
+    .hero-section {
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .hero-content {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 40px;
+        border-radius: 8px;
+    }
+
+    .btn-primary {
+        background-color: #FF9900;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+        .btn-primary:hover {
+            background-color: #FFB84D;
+        }
+</style>

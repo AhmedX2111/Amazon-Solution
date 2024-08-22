@@ -13,6 +13,7 @@ using System.Net;
 
 namespace Amazon.Controllers
 {
+    /*[Authorize(Roles = "Admin")]*/
     public class ElectronicsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -116,6 +117,7 @@ namespace Amazon.Controllers
                 Name = name,
                 Address = customerAddress,
                 ProductName = laptop.Name,
+                LaptopId = laptop.Id
                 
             };
 
